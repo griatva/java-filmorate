@@ -137,7 +137,7 @@ class FilmTest {
         assertEquals(1, violations.size(), "Ошибка не появилась");
 
         ConstraintViolation<Film> violation = violations.iterator().next();
-        assertEquals("validReleaseDate", violation.getPropertyPath().toString());
+        assertEquals("releaseDate", violation.getPropertyPath().toString());
         assertEquals("Фильм должен быть выпущен позже 28 декабря 1895 года", violation.getMessage());
     }
 

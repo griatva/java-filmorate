@@ -4,7 +4,7 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -51,29 +51,29 @@ public class UserController {
         Long newUserId = newUser.getId();
 
         if (newUserId == null) {
-            throw new ConditionsNotMetException("Id должен быть указан");
+            throw new ValidationException("Id должен быть указан");
         }
 
         if (!users.containsKey(newUserId)) {
             throw new NotFoundException("Пользователь с id = " + newUserId + " не найден");
-        } else {
-            for (User value : users.values()) {
-                if (value.getEmail().equals(newUser.getEmail()) && !value.getId().equals(newUserId)) {
-                    throw new DuplicatedDataException("Этот имейл уже используется");
-                }
-            }
-
-            User oldUser = users.get(newUserId);
-            oldUser.setEmail(newUser.getEmail());
-            oldUser.setLogin(newUser.getLogin());
-            if (newUser.getName() == null || newUser.getName().isBlank()) {
-                oldUser.setName(oldUser.getLogin());
-            } else {
-                oldUser.setName(newUser.getName());
-            }
-            oldUser.setBirthday(newUser.getBirthday());
-            log.info("Обновление данных пользователя: {} - закончено", oldUser);
-            return oldUser;
         }
+
+        for (User value : users.values()) {
+            if (value.getEmail().equals(newUser.getEmail()) && !value.getId().equals(newUserId)) {
+                throw new DuplicatedDataException("Этот имейл уже используется");
+            }
+        }
+
+        User oldUser = users.get(newUserId);
+        oldUser.setEmail(newUser.getEmail());
+        oldUser.setLogin(newUser.getLogin());
+        if (newUser.getName() == null || newUser.getName().isBlank()) {
+            oldUser.setName(oldUser.getLogin());
+        } else {
+            oldUser.setName(newUser.getName());
+        }
+        oldUser.setBirthday(newUser.getBirthday());
+        log.info("Обновление данных пользователя: {} - закончено", oldUser);
+        return oldUser;
     }
 }

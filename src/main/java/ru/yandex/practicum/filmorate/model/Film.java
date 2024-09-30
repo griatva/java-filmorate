@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.validation.annotation.ValidReleaseDate;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -31,18 +32,10 @@ public class Film {
     private String description;
 
     @NotNull(message = "Это поле обязательно для заполнения")
+    @ValidReleaseDate
     private LocalDate releaseDate;
 
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private Integer duration;
-
-    @AssertTrue(message = "Фильм должен быть выпущен позже 28 декабря 1895 года")
-    public boolean isValidReleaseDate() {
-        if (releaseDate == null) {
-            return true; // Это может быть не идеально, но позволяет избежать исключений.
-        }
-        LocalDate cinemaBirthday = LocalDate.of(1895, 12, 28);
-        return releaseDate.isAfter(cinemaBirthday);
-    }
 
 }

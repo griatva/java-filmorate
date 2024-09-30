@@ -136,7 +136,8 @@ class UserTest {
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("login", violation.getPropertyPath().toString());
-        assertEquals("Логин не может быть пустым, состоять только из пробелов или содержать пробелы", violation.getMessage());
+        assertEquals("Логин не может быть пустым, состоять только из пробелов или содержать пробелы",
+                violation.getMessage());
     }
 
     @Test
