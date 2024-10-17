@@ -9,6 +9,7 @@ import java.time.LocalDate;
 public class ReleaseDateValidator implements ConstraintValidator<ValidReleaseDate, LocalDate> {
 
     private String message;
+    private static final LocalDate FILM_BIRTHDAY = LocalDate.of(1895,12,28);
 
     @Override
     public void initialize(ValidReleaseDate constraintAnnotation) {
@@ -20,8 +21,7 @@ public class ReleaseDateValidator implements ConstraintValidator<ValidReleaseDat
         if (releaseDate == null) {
             return true;
         }
-        LocalDate cinemaBirthday = LocalDate.of(1895, 12, 28);
-        if (!releaseDate.isAfter(cinemaBirthday)) {
+        if (!releaseDate.isAfter(FILM_BIRTHDAY)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(message)
                     .addConstraintViolation();
