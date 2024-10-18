@@ -19,4 +19,8 @@ public interface UserStorage {
     List<User> getFriendsList(long id);
 
     List<User> getCommonFriendsList(long id, long otherId);
+
+    boolean existByEmail(String email);
+
+    boolean containsUserById(long id);
 }

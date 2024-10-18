@@ -2,9 +2,6 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -34,37 +31,17 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User createUser(User user) {
         log.info("Получен запрос на добавление пользователя: {}", user);
-        for (User value : users.values()) {
-            if (value.getEmail().equals(user.getEmail())) {
-                throw new DuplicatedDataException("Этот имейл уже используется");
-            }
-        }
         user.setId(getNextId());
         users.put(user.getId(), user);
         log.info("Добавление пользователя: {} - закончено, присвоен id: {}", user, user.getId());
         return user;
     }
 
+
     @Override
     public User updateUser(User newUser) {
         log.info("Получен запрос на обновление данных пользователя c id: {}", newUser.getId());
-        Long newUserId = newUser.getId();
-
-        if (newUserId == null) {
-            throw new ValidationException("Id должен быть указан");
-        }
-
-        if (!users.containsKey(newUserId)) {
-            throw new NotFoundException("Пользователь с id = " + newUserId + " не найден");
-        }
-
-        for (User value : users.values()) {
-            if (value.getEmail().equals(newUser.getEmail()) && !value.getId().equals(newUserId)) {
-                throw new DuplicatedDataException("Этот имейл уже используется");
-            }
-        }
-
-        User oldUser = users.get(newUserId);
+        User oldUser = users.get(newUser.getId());
         oldUser.setEmail(newUser.getEmail());
         oldUser.setLogin(newUser.getLogin());
         if (newUser.getName() == null || newUser.getName().isBlank()) {
@@ -77,16 +54,10 @@ public class InMemoryUserStorage implements UserStorage {
         return oldUser;
     }
 
+
     @Override
     public void addFriend(long id, long friendId) {
         log.info("Получен запрос на добавление в друзья пользователей c id: {} и {}", id, friendId);
-
-        if (!users.containsKey(id)) {
-            throw new NotFoundException("Пользователь c id = " + id + " не найден");
-        }
-        if (!users.containsKey(friendId)) {
-            throw new NotFoundException("Пользователь c id = " + friendId + " не найден");
-        }
 
         Set<Long> usFriendsIds = userFriendsIds.computeIfAbsent(id, userId -> new HashSet<>());
         if (usFriendsIds.contains(friendId)) {
@@ -99,17 +70,10 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Пользователи c id: {} и {} добавлены друг к другу в друзья", id, friendId);
     }
 
+
     @Override
     public void deleteFriend(long id, long friendId) {
         log.info("Получен запрос на удаление из друзей пользователей c id: {} и {}", id, friendId);
-
-        if (!users.containsKey(id)) {
-            throw new NotFoundException("Пользователь c id = " + id + " не найден");
-        }
-        if (!users.containsKey(friendId)) {
-            throw new NotFoundException("Пользователь c id = " + friendId + " не найден");
-        }
-
         Set<Long> usFriendsIds = userFriendsIds.computeIfAbsent(id, userId -> new HashSet<>());
         usFriendsIds.remove(friendId);
         Set<Long> frFriendsIds = userFriendsIds.computeIfAbsent(friendId, frId -> new HashSet<>());
@@ -117,12 +81,10 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Пользователи c id: {} и {} удалены из друзей", id, friendId);
     }
 
+
     @Override
     public List<User> getFriendsList(long id) {
         log.info("Получен запрос на список друзей пользователя c id: {}", id);
-        if (!users.containsKey(id)) {
-            throw new NotFoundException("Пользователь c id = " + id + " не найден");
-        }
         List<User> friendsList = new ArrayList<>();
         Set<Long> usFriendsIds = userFriendsIds.get(id);
         if (!(usFriendsIds == null)) {
@@ -134,16 +96,11 @@ public class InMemoryUserStorage implements UserStorage {
         return friendsList;
     }
 
+
     @Override
     public List<User> getCommonFriendsList(long id, long otherId) {
         log.info("Получен запрос на список общих друзей пользователей c id: {} и {}", id, otherId);
 
-        if (!users.containsKey(id)) {
-            throw new NotFoundException("Пользователь c id = " + id + " не найден");
-        }
-        if (!users.containsKey(otherId)) {
-            throw new NotFoundException("Пользователь c id = " + otherId + " не найден");
-        }
         Set<Long> usFriendsIds = userFriendsIds.get(id);
         Set<Long> otFriendsIds = userFriendsIds.get(otherId);
         List<User> commonFriendsList = new ArrayList<>();
@@ -159,8 +116,15 @@ public class InMemoryUserStorage implements UserStorage {
         return commonFriendsList;
     }
 
-    public boolean containsUser(long userId) {
-        return users.containsKey(userId);
+    @Override
+    public boolean containsUserById(long id) {
+        return users.containsKey(id);
+    }
+
+    @Override
+    public boolean existByEmail(String email) {
+        return users.values().stream()
+                .anyMatch(user -> user.getEmail().equals(email));
     }
 
 }
