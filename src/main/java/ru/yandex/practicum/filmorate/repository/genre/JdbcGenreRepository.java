@@ -17,7 +17,7 @@ import java.util.*;
 @Slf4j
 @AllArgsConstructor
 @Repository
-public class JdbcGenreRepository implements GenreRepository{
+public class JdbcGenreRepository implements GenreRepository {
     private JdbcTemplate jdbc;
 
     @Override
