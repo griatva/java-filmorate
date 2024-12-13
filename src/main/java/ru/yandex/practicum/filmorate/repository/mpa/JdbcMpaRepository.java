@@ -16,7 +16,7 @@ import java.util.*;
 @Slf4j
 @AllArgsConstructor
 @Repository
-public class JdbcMpaRepository implements MpaRepository{
+public class JdbcMpaRepository implements MpaRepository {
 
     private JdbcTemplate jdbc;
 
