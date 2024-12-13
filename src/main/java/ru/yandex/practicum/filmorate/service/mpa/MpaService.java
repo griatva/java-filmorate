@@ -6,5 +6,6 @@ import java.util.List;
 public interface MpaService {
 
     List<RatingMPA> getAllMpa();
+
     RatingMPA getMpaById(Integer id);
 }
