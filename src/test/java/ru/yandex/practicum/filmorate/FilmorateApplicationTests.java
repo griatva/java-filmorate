@@ -98,10 +98,10 @@ class FilmorateApplicationTests {
 	@Transactional
 	public void getFilmsList() {
 		//given
-		Film film1 = createNewFilm(null, "Name1", "Description1", 
+		Film film1 = createNewFilm(null, "Name1", "Description1",
 				LocalDate.of(2020, 11, 11),
 				110, new RatingMPA(1, "G"));
-		Film film2 = createNewFilm(null, "Name2", "Description2", 
+		Film film2 = createNewFilm(null, "Name2", "Description2",
 				LocalDate.of(2020, 12, 12),
 				120, new RatingMPA(2, "PG"));
 
@@ -124,7 +124,7 @@ class FilmorateApplicationTests {
 	@Transactional
 	public void createFilm() {
 		//given
-		Film filmExpected = createNewFilm(null, "Name1", "Description1", 
+		Film filmExpected = createNewFilm(null, "Name1", "Description1",
 				LocalDate.of(2020, 11, 11), 110, new RatingMPA(1, "G"));
 
 		//when
@@ -256,7 +256,7 @@ class FilmorateApplicationTests {
 	@Transactional
 	public void findFilmById() {
 
-		Film expectedFilm = createNewFilm(null, "Name1", "Description1", 
+		Film expectedFilm = createNewFilm(null, "Name1", "Description1",
 				LocalDate.of(2020, 11, 11),
 				110, new RatingMPA(1, "G"));
 
