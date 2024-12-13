@@ -201,13 +201,13 @@ public class JdbcFilmRepository implements FilmRepository {
         Integer ratingMPAId = (newFilm.getMpa() != null && newFilm.getMpa().getId() != null)
                 ? newFilm.getMpa().getId()
                 : null;
-        jdbc.update(UPDATE_FILM
-                , newFilm.getName()
-                , newFilm.getDescription()
-                , newFilm.getReleaseDate()
-                , newFilm.getDuration()
-                , ratingMPAId
-                , newFilmId
+        jdbc.update(UPDATE_FILM,
+                newFilm.getName(),
+                newFilm.getDescription(),
+                newFilm.getReleaseDate(),
+                newFilm.getDuration(),
+                ratingMPAId,
+                newFilmId
         );
 
         final String DELETE_ALL_OLD_GENRES = "delete from film_genres \n" +
