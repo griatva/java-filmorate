@@ -33,7 +33,7 @@ public class JdbcUserRepository implements UserRepository {
         return getUsersList(GET_ALL_USERS);
     }
 
-    private List<User> getUsersList(String sqlQuery, Object... params){
+    private List<User> getUsersList(String sqlQuery, Object... params) {
         log.info("Начало подготовки списка пользователей");
         return jdbc.query(sqlQuery, params, new ResultSetExtractor<List<User>>() {
             @Override
@@ -104,12 +104,12 @@ public class JdbcUserRepository implements UserRepository {
                 "where user_id = ?;";
         long newUserId = newUser.getId();
 
-        jdbc.update(UPDATE_USER
-                , newUser.getLogin()
-                , newUser.getName()
-                , newUser.getEmail()
-                , newUser.getBirthday()
-                , newUserId
+        jdbc.update(UPDATE_USER,
+                newUser.getLogin(),
+                newUser.getName(),
+                newUser.getEmail(),
+                newUser.getBirthday(),
+                newUserId
         );
 
         final User updatedUser = getUserById(newUserId)
