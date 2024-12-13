@@ -18,4 +18,6 @@ public interface FilmService {
 
     List<Film> getPopularFilms(int count);
 
+    Film findFilmById(long id);
+
 }
