@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MpaServiceImpl implements MpaService{
+public class MpaServiceImpl implements MpaService {
 
     private final MpaRepository mpaRepository;
 
