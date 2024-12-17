@@ -21,4 +21,6 @@ public interface FilmRepository {
 
     Optional<Film> findFilmById(long id);
 
+    boolean isLikeExist(long filmId, long userId);
+
 }

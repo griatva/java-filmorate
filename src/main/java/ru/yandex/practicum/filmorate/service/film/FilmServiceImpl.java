@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -14,6 +15,7 @@ import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmServiceImpl implements FilmService {
@@ -37,7 +39,6 @@ public class FilmServiceImpl implements FilmService {
 
         return filmRepository.createFilm(film);
     }
-
 
 
     @Override
@@ -82,7 +83,11 @@ public class FilmServiceImpl implements FilmService {
         if (!userRepository.containsUserById(userId)) {
             throw new NotFoundException("Пользователь c id = " + userId + " не найден");
         }
-        filmRepository.addLike(filmId, userId);
+        if (!filmRepository.isLikeExist(filmId, userId)) {
+            filmRepository.addLike(filmId, userId);
+        } else {
+            log.info("Лайк этим пользователем этому фильму уже был добавлен ранее");
+        }
     }
 
 
@@ -94,7 +99,11 @@ public class FilmServiceImpl implements FilmService {
         if (!userRepository.containsUserById(userId)) {
             throw new NotFoundException("Пользователь c id = " + filmId + " не найден");
         }
-        filmRepository.deleteLike(filmId, userId);
+        if (filmRepository.isLikeExist(filmId, userId)) {
+            filmRepository.deleteLike(filmId, userId);
+        } else {
+            log.info("Лайк не найден");
+        }
     }
 
     @Override
