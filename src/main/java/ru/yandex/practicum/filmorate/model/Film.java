@@ -5,23 +5,11 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.annotation.ValidReleaseDate;
 
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.Set;
 
 
 @Data
 public class Film {
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Film film = (Film) o;
-        return Objects.equals(name, film.name) && Objects.equals(releaseDate, film.releaseDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, releaseDate);
-    }
 
     private Long id;
 
@@ -38,4 +26,9 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private Integer duration;
 
+    private Set<Genre> genres;
+
+    private RatingMPA mpa;
+
+    private Integer likes;
 }
