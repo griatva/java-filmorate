@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 
 import java.util.List;
 
@@ -14,23 +14,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
 
 
     @Override
     public List<User> getUserList() {
-        return userStorage.getUserList();
+        return userRepository.getUserList();
     }
 
     @Override
     public User createUser(User user) {
-        if (userStorage.existByEmail(user.getEmail())) {
+        if (userRepository.existByEmail(user.getEmail())) {
             throw new DuplicatedDataException("Этот имейл уже используется");
         }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        return userStorage.createUser(user);
+        return userRepository.createUser(user);
     }
 
     @Override
@@ -39,60 +39,60 @@ public class UserServiceImpl implements UserService {
         if (newUserId == null) {
             throw new ValidationException("Id должен быть указан");
         }
-        if (!userStorage.containsUserById(newUserId)) {
-            throw new NotFoundException("Пользователь с id = " + newUserId + " не найден");
+        if (!userRepository.containsUserById(newUserId)) {
+            throw new NotFoundException("Service: Пользователь с id = " + newUserId + " не найден");
         }
 
-        if (userStorage.existByEmail(newUser.getEmail())) {
+        if (userRepository.existByEmail(newUser.getEmail())) {
             throw new DuplicatedDataException("Этот имейл уже используется");
         }
-        return userStorage.updateUser(newUser);
+        return userRepository.updateUser(newUser);
     }
 
 
     @Override
     public void addFriend(long id, long friendId) {
-        if (!userStorage.containsUserById(id)) {
+        if (!userRepository.containsUserById(id)) {
             throw new NotFoundException("Пользователь c id = " + id + " не найден");
         }
-        if (!userStorage.containsUserById(friendId)) {
+        if (!userRepository.containsUserById(friendId)) {
             throw new NotFoundException("Пользователь c id = " + friendId + " не найден");
         }
-        userStorage.addFriend(id, friendId);
+        userRepository.addFriend(id, friendId);
     }
 
 
     @Override
     public void deleteFriend(long id, long friendId) {
-        if (!userStorage.containsUserById(id)) {
+        if (!userRepository.containsUserById(id)) {
             throw new NotFoundException("Пользователь c id = " + id + " не найден");
         }
-        if (!userStorage.containsUserById(friendId)) {
+        if (!userRepository.containsUserById(friendId)) {
             throw new NotFoundException("Пользователь c id = " + friendId + " не найден");
         }
-        userStorage.deleteFriend(id, friendId);
+        userRepository.deleteFriend(id, friendId);
     }
 
 
     @Override
     public List<User> getFriendsList(long id) {
-        if (!userStorage.containsUserById(id)) {
+        if (!userRepository.containsUserById(id)) {
             throw new NotFoundException("Пользователь c id = " + id + " не найден");
         }
-        return userStorage.getFriendsList(id);
+        return userRepository.getFriendsList(id);
     }
 
 
     @Override
     public List<User> getCommonFriendsList(long id, long otherId) {
-        if (!userStorage.containsUserById(id)) {
+        if (!userRepository.containsUserById(id)) {
             throw new NotFoundException("Пользователь c id = " + id + " не найден");
         }
-        if (!userStorage.containsUserById(otherId)) {
+        if (!userRepository.containsUserById(otherId)) {
             throw new NotFoundException("Пользователь c id = " + otherId + " не найден");
         }
 
-        return userStorage.getCommonFriendsList(id, otherId);
+        return userRepository.getCommonFriendsList(id, otherId);
     }
 
 }
