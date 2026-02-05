@@ -23,7 +23,7 @@ public class MpaServiceImpl implements MpaService {
     public RatingMPA getMpaById(Integer id) {
         RatingMPA ratingMPA = mpaRepository.getMpaById(id);
         if (ratingMPA == null) {
-            throw new NotFoundException("Рейтинг MPA с id = " + id + " отсутствует");
+            throw new NotFoundException("MPA rating with id = " + id + " was not found");
         }
         return ratingMPA;
     }

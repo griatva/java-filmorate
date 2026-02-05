@@ -25,7 +25,7 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Optional<Film> findFilmById(long id) {
-        log.info("Получен запрос на поиск фильма по его id: {}", id);
+        log.info("Received request to find a film by id: {}", id);
 
         final String FIND_BY_ID = "SELECT f.film_id,\n" +
                 "f.name AS film_name,\n" +
@@ -53,7 +53,7 @@ public class JdbcFilmRepository implements FilmRepository {
                     }
                     addGenreToFilm(rs, film);
                 }
-                log.info("Подготовлен Optional, который, возможно, содержит фильм с id = {}", id);
+                log.info("Prepared an Optional that may contain a film with id = {}", id);
                 return Optional.ofNullable(film);
             }
         }, id);
@@ -61,7 +61,7 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public List<Film> getFilmsList() {
-        log.info("Получен запрос на получение списка всех фильмов");
+        log.info("Received request to retrieve the list of all films");
 
         final String GET_ALL = "SELECT \n" +
                 "    f.film_id AS id_film,\n" +
@@ -98,7 +98,7 @@ public class JdbcFilmRepository implements FilmRepository {
                     }
                     addGenreToFilm(rs, film);
                 }
-                log.info("Список всех фильмов подготовлен");
+                log.info("The list of all films has been prepared");
                 return new ArrayList<>(films.values());
             }
         });
@@ -106,7 +106,7 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Film createFilm(Film film) {
-        log.info("Получен запрос на добавление фильма: {}", film);
+        log.info("Received request to add a film: {}", film);
 
         final String CREATE_FILM = "INSERT INTO films (name, description, release_date, duration, rating_mpa_id) " +
                 "VALUES (?, ?, ?, ?, ?);";
@@ -131,19 +131,19 @@ public class JdbcFilmRepository implements FilmRepository {
         if (generatedId != null) {
             film.setId(generatedId);
         } else {
-            throw new RuntimeException("Не удалось получить сгенерированный ID для фильма");
+            throw new RuntimeException("Failed to retrieve the generated ID for the film");
         }
 
         insertGenres(film);
 
-        log.info("Добавление фильма: {} - закончено, присвоен id: {}", film, film.getId());
+        log.info("Adding film: {} - completed, assigned id: {}", film, film.getId());
         return film;
     }
 
 
     @Override
     public Film updateFilm(Film newFilm) {
-        log.info("Получен запрос на обновление фильма: {}", newFilm);
+        log.info("Received request to update a film: {}", newFilm);
 
         final String UPDATE_FILM = "update films set " +
                 "name = ?, description = ?, release_date = ?, duration = ?, rating_mpa_id = ? " +
@@ -168,15 +168,15 @@ public class JdbcFilmRepository implements FilmRepository {
         insertGenres(newFilm);
 
         final Film updatedFilm = findFilmById(newFilmId)
-                .orElseThrow(() -> new NotFoundException("Фильм с id = " + newFilmId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Film with id = " + newFilmId + " was not found"));
 
-        log.info("Обновление фильма: {} - закончено.", newFilm);
+        log.info("Updating film: {} - completed.", newFilm);
         return updatedFilm;
     }
 
 
     private void insertGenres(Film film) {
-        log.info("Начало добавления жанров фильма с id = {} в таблицу film_genres.", film.getId());
+        log.info("Starting to add genres for film with id = {} to the film_genres table.", film.getId());
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             final String INSERT_GENRE = "MERGE INTO film_genres (film_id, genre_id) KEY (film_id, genre_id) VALUES (?, ?)";
@@ -186,34 +186,34 @@ public class JdbcFilmRepository implements FilmRepository {
             }
             jdbc.batchUpdate(INSERT_GENRE, batchArgs);
         }
-        log.info("Конец добавления жанров фильма с id = {} в таблицу film_genres.", film.getId());
+        log.info("Finished adding genres for film with id = {} to the film_genres table.", film.getId());
 
     }
 
     @Override
     public void addLike(long filmId, long userId) {
-        log.info("Получен запрос поставить лайк от пользователя с id = {} фильму с id = {}", userId, filmId);
+        log.info("Received request to add a like from user with id = {} to film with id = {}", userId, filmId);
 
         final String INSERT_LIKE = "MERGE INTO likes (user_id, film_id) VALUES (?, ?);";
         int rowsAffected = jdbc.update(INSERT_LIKE, userId, filmId);
 
         if (rowsAffected > 0) {
-            log.info("Пользователь с id = {} поставил лайк фильму с id = {}", userId, filmId);
+            log.info("User with id = {} liked film with id = {}", userId, filmId);
         } else {
-            log.warn("Не удалось добавить like для userId: {} и filmId: {}", userId, filmId);
+            log.warn("Failed to add like for userId: {} and filmId: {}", userId, filmId);
         }
     }
 
     @Override
     public void deleteLike(long filmId, long userId) {
-        log.info("Получен запрос удалить лайк от пользователя с id = {} фильму с id = {}", userId, filmId);
+        log.info("Received request to remove a like from user with id = {} for film with id = {}", userId, filmId);
         final String DELETE_LIKE = "delete from likes \n" +
                 "where (user_id, film_id)  = (?,?);";
         int rowsAffected = jdbc.update(DELETE_LIKE, userId, filmId);
         if (rowsAffected > 0) {
-            log.info("Пользователь с id = {} удалил лайк фильму с id = {}", userId, filmId);
+            log.info("User with id = {} removed like from film with id = {}", userId, filmId);
         } else {
-            log.warn("Пользователю с id = {} не удалось удалить лайк фильму с id = {}", userId, filmId);
+            log.warn("User with id = {} failed to remove like from film with id = {}", userId, filmId);
         }
     }
 
@@ -225,7 +225,7 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        log.info("Получен запрос на получение наиболее популярных фильмов");
+        log.info("Received request to retrieve the most popular films");
 
         final String GET_POPULAR_FILMS =
                 "SELECT " +
@@ -281,7 +281,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 }
             }
         });
-        log.info("Список наиболее популярных фильмов подготовлен");
+        log.info("The list of the most popular films has been prepared");
         return new ArrayList<>(films.values());
     }
 
@@ -309,7 +309,7 @@ public class JdbcFilmRepository implements FilmRepository {
 
             return film;
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка при извлечении фильма из ResultSet", e);
+            throw new RuntimeException("Error extracting film from ResultSet", e);
         }
     }
 
@@ -324,7 +324,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 film.getGenres().add(genre);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка при добавлении жанра к фильму", e);
+            throw new RuntimeException("Error adding genre to film", e);
         }
     }
 }

@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
         if (userRepository.existByEmail(user.getEmail())) {
-            throw new DuplicatedDataException("Этот имейл уже используется");
+            throw new DuplicatedDataException("This email is already in use");
         }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -37,14 +37,14 @@ public class UserServiceImpl implements UserService {
     public User updateUser(User newUser) {
         Long newUserId = newUser.getId();
         if (newUserId == null) {
-            throw new ValidationException("Id должен быть указан");
+            throw new ValidationException("Id must be specified");
         }
         if (!userRepository.containsUserById(newUserId)) {
-            throw new NotFoundException("Service: Пользователь с id = " + newUserId + " не найден");
+            throw new NotFoundException("Service: User with id = " + newUserId + " was not found");
         }
 
         if (userRepository.existByEmail(newUser.getEmail())) {
-            throw new DuplicatedDataException("Этот имейл уже используется");
+            throw new DuplicatedDataException("This email is already in use");
         }
         return userRepository.updateUser(newUser);
     }
@@ -53,10 +53,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addFriend(long id, long friendId) {
         if (!userRepository.containsUserById(id)) {
-            throw new NotFoundException("Пользователь c id = " + id + " не найден");
+            throw new NotFoundException("User with id = " + id + " was not found");
         }
         if (!userRepository.containsUserById(friendId)) {
-            throw new NotFoundException("Пользователь c id = " + friendId + " не найден");
+            throw new NotFoundException("User with id = " + friendId + " was not found");
         }
         userRepository.addFriend(id, friendId);
     }
@@ -65,10 +65,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteFriend(long id, long friendId) {
         if (!userRepository.containsUserById(id)) {
-            throw new NotFoundException("Пользователь c id = " + id + " не найден");
+            throw new NotFoundException("User with id = " + id + " was not found");
         }
         if (!userRepository.containsUserById(friendId)) {
-            throw new NotFoundException("Пользователь c id = " + friendId + " не найден");
+            throw new NotFoundException("User with id = " + friendId + " was not found");
         }
         userRepository.deleteFriend(id, friendId);
     }
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getFriendsList(long id) {
         if (!userRepository.containsUserById(id)) {
-            throw new NotFoundException("Пользователь c id = " + id + " не найден");
+            throw new NotFoundException("User with id = " + id + " was not found");
         }
         return userRepository.getFriendsList(id);
     }
@@ -86,10 +86,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getCommonFriendsList(long id, long otherId) {
         if (!userRepository.containsUserById(id)) {
-            throw new NotFoundException("Пользователь c id = " + id + " не найден");
+            throw new NotFoundException("User with id = " + id + " was not found");
         }
         if (!userRepository.containsUserById(otherId)) {
-            throw new NotFoundException("Пользователь c id = " + otherId + " не найден");
+            throw new NotFoundException("User with id = " + otherId + " was not found");
         }
 
         return userRepository.getCommonFriendsList(id, otherId);

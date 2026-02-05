@@ -146,13 +146,20 @@ class FilmorateApplicationTests {
 
 		//when
 		filmRepository.updateFilm(filmExpected);
-		Optional<Film> filmActual = filmRepository.findFilmById(1);
+		Optional<Film> filmActual = filmRepository.findFilmById(1L);
 
 		//then
-		assertThat(filmActual)
-				.isPresent()
-				.get()
-				.isEqualTo(filmExpected);
+		assertThat(filmActual).isPresent();
+
+		Film actual = filmActual.get();
+
+		assertThat(actual.getId()).isEqualTo(1L);
+		assertThat(actual.getName()).isEqualTo("Name2");
+		assertThat(actual.getDescription()).isEqualTo("Description2");
+		assertThat(actual.getReleaseDate()).isEqualTo(LocalDate.of(2020, 12, 12));
+		assertThat(actual.getDuration()).isEqualTo(120);
+		assertThat(actual.getMpa().getId()).isEqualTo(2);
+		assertThat(actual.getMpa().getName()).isEqualTo("PG");
 	}
 
 	@Test
@@ -179,8 +186,8 @@ class FilmorateApplicationTests {
 		assertThat(count).isEqualTo(1);
 
 		Film film = filmRepository.findFilmById(2).orElseThrow(() ->
-				new NotFoundException("Фильм, которому поставили лайки, не найден"));
-		assertEquals(1, film.getLikes(), "Количество лайков неверное, лайк не добавился");
+				new NotFoundException("The film that received likes was not found"));
+		assertEquals(1, film.getLikes(), "Incorrect number of likes, the like was not added");
 	}
 
 	@Test
@@ -262,12 +269,19 @@ class FilmorateApplicationTests {
 
 		filmRepository.createFilm(expectedFilm);
 
-		Optional<Film> filmOptional = filmRepository.findFilmById(1);
+		Optional<Film> filmOptional = filmRepository.findFilmById(1L);
 
-		assertThat(filmOptional)
-				.isPresent()
-				.get()
-				.isEqualTo(expectedFilm);
+		assertThat(filmOptional).isPresent();
+
+		Film actual = filmOptional.get();
+
+		assertThat(actual.getId()).isEqualTo(1L);
+		assertThat(actual.getName()).isEqualTo("Name1");
+		assertThat(actual.getDescription()).isEqualTo("Description1");
+		assertThat(actual.getReleaseDate()).isEqualTo(LocalDate.of(2020, 11, 11));
+		assertThat(actual.getDuration()).isEqualTo(110);
+		assertThat(actual.getMpa().getId()).isEqualTo(1);
+		assertThat(actual.getMpa().getName()).isEqualTo("G");
 	}
 
 	@Test

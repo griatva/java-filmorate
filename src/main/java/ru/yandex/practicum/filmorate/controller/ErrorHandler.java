@@ -18,7 +18,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
-        return new ErrorResponse("Сущность не найдена", e.getMessage());
+        return new ErrorResponse("Entity not found", e.getMessage());
     }
 
     @ExceptionHandler
@@ -31,18 +31,18 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDuplicatedData(final DuplicatedDataException e) {
-        return new ErrorResponse("Дублирование информации", e.getMessage());
+        return new ErrorResponse("Duplicate data", e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleValidation(final ValidationException e) {
-        return new ErrorResponse("Ошибка валидации", e.getMessage());
+        return new ErrorResponse("Validation error", e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException e) {
-        return new ErrorResponse("Ошибка валидации", e.getMessage());
+        return new ErrorResponse("Validation error", e.getMessage());
     }
 }

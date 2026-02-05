@@ -12,18 +12,18 @@ public class User {
 
     private Long id;
 
-    @NotBlank(message = "Адрес электронной почты не может быть пустым")
-    @Email(message = "Некорректный адрес электронной почты")
+    @NotBlank(message = "Email must not be blank")
+    @Email(message = "Invalid email address")
     private String email;
 
-    @NotNull(message = "Это поле обязательно для заполнения")
-    @Pattern(regexp = "^[^\\s]+$", message = "Логин не может быть пустым, состоять только из пробелов или содержать пробелы")
+    @NotNull(message = "This field is required")
+    @Pattern(regexp = "^[^\\s]+$", message = "Login must not be blank, consist only of whitespace, or contain spaces")
     private String login;
 
     private String name;
 
-    @NotNull(message = "Это поле обязательно для заполнения")
-    @PastOrPresent(message = "Дата рождения не может быть в будущем")
+    @NotNull(message = "This field is required")
+    @PastOrPresent(message = "Birth date must not be in the future")
     private LocalDate birthday;
 
     private Set<Long> friendsIds;

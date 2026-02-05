@@ -45,11 +45,11 @@ public class FilmServiceImpl implements FilmService {
     public Film updateFilm(Film newFilm) {
         final Long newFilmId = newFilm.getId();
         if (newFilmId == null) {
-            throw new ValidationException("Id должен быть указан");
+            throw new ValidationException("Id must be specified");
         }
 
         final Film existingFilm = filmRepository.findFilmById(newFilmId)
-                .orElseThrow(() -> new NotFoundException("Фильм с id = " + newFilmId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Film with id = " + newFilmId + " was not found"));
 
         checkForRelatedData(newFilm);
 
@@ -60,7 +60,7 @@ public class FilmServiceImpl implements FilmService {
         if (film.getMpa() != null && film.getMpa().getId() != null) {
             RatingMPA ratingMPA = mpaRepository.getMpaById(film.getMpa().getId());
             if (ratingMPA == null) {
-                throw new ValidationException("MPA с id " + film.getMpa().getId() + " не найден");
+                throw new ValidationException("MPA with id " + film.getMpa().getId() + " was not found");
             }
             film.getMpa().setName(ratingMPA.getName());
         }
@@ -69,7 +69,7 @@ public class FilmServiceImpl implements FilmService {
             final List<Integer> newFilmsGenreIds = film.getGenres().stream().map(Genre::getId).toList();
             final List<Genre> genresInDB = genreRepository.getByIds(newFilmsGenreIds);
             if (newFilmsGenreIds.size() != genresInDB.size()) {
-                throw new ValidationException("Жанры не найдены");
+                throw new ValidationException("Genres were not found");
             }
         }
     }
@@ -78,15 +78,15 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public void addLike(long filmId, long userId) {
         Film existingFilm = filmRepository.findFilmById(filmId)
-                .orElseThrow(() -> new NotFoundException("Фильм с id = " + filmId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Film with id = " + filmId + " was not found"));
 
         if (!userRepository.containsUserById(userId)) {
-            throw new NotFoundException("Пользователь c id = " + userId + " не найден");
+            throw new NotFoundException("User with id = " + userId + " was not found");
         }
         if (!filmRepository.isLikeExist(filmId, userId)) {
             filmRepository.addLike(filmId, userId);
         } else {
-            log.info("Лайк этим пользователем этому фильму уже был добавлен ранее");
+            log.info("This user has already liked this film");
         }
     }
 
@@ -94,15 +94,15 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public void deleteLike(long filmId, long userId) {
         Film existingFilm = filmRepository.findFilmById(filmId)
-                .orElseThrow(() -> new NotFoundException("Фильм с id = " + filmId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Film with id = " + filmId + " was not found"));
 
         if (!userRepository.containsUserById(userId)) {
-            throw new NotFoundException("Пользователь c id = " + filmId + " не найден");
+            throw new NotFoundException("User with id = " + filmId + " was not found");
         }
         if (filmRepository.isLikeExist(filmId, userId)) {
             filmRepository.deleteLike(filmId, userId);
         } else {
-            log.info("Лайк не найден");
+            log.info("Like not found");
         }
     }
 
@@ -114,6 +114,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film findFilmById(long id) {
         return filmRepository.findFilmById(id)
-                .orElseThrow(() -> new NotFoundException("Фильм с id = " + id + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Film with id = " + id + " was not found"));
     }
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Тестирование валидации модели User")
+@DisplayName("User model validation tests")
 class UserTest {
 
 
@@ -35,7 +35,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле email равно null")
+    @DisplayName("Should throw an error if the email field is null")
     void validateNullEmail() {
         User user = new User();
         user.setLogin("Lubov");
@@ -44,16 +44,16 @@ class UserTest {
         user.setEmail(null);
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("email", violation.getPropertyPath().toString());
-        assertEquals("Адрес электронной почты не может быть пустым", violation.getMessage());
+        assertEquals("Email must not be blank", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле email пустое")
+    @DisplayName("Should throw an error if the email field is empty")
     void validateEmptyEmail() {
         User user = new User();
         user.setLogin("Lubov");
@@ -62,16 +62,16 @@ class UserTest {
         user.setEmail("");
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("email", violation.getPropertyPath().toString());
-        assertEquals("Адрес электронной почты не может быть пустым", violation.getMessage());
+        assertEquals("Email must not be blank", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть 2 ошибки, если поле email состоит из пробелов")
+    @DisplayName("Should throw two errors if the email field contains only spaces")
     void validateEmailConsistsOfSpaces() {
         User user = new User();
         user.setLogin("Lubov");
@@ -80,12 +80,12 @@ class UserTest {
         user.setEmail("  ");
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(2, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(2, violations.size(), "Incorrect number of validation errors");
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если email не соответствует формату")
+    @DisplayName("Should throw an error if the email format is invalid")
     void validateCorrectEmail() {
         User user = new User();
         user.setLogin("Lubov");
@@ -94,17 +94,17 @@ class UserTest {
         user.setEmail("lubov.ru");
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("email", violation.getPropertyPath().toString());
-        assertEquals("Некорректный адрес электронной почты", violation.getMessage());
+        assertEquals("Invalid email address", violation.getMessage());
     }
 
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле login равно null")
+    @DisplayName("Should throw an error if the login field is null")
     void validateNullLogin() {
         User user = new User();
         user.setEmail("lubov@mail.ru");
@@ -113,16 +113,16 @@ class UserTest {
         user.setLogin(null);
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("login", violation.getPropertyPath().toString());
-        assertEquals("Это поле обязательно для заполнения", violation.getMessage());
+        assertEquals("This field is required", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле login пустое")
+    @DisplayName("Should throw an error if the login field is empty")
     void validateEmptyLogin() {
         User user = new User();
         user.setEmail("lubov@mail.ru");
@@ -131,17 +131,17 @@ class UserTest {
         user.setLogin("");
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("login", violation.getPropertyPath().toString());
-        assertEquals("Логин не может быть пустым, состоять только из пробелов или содержать пробелы",
+        assertEquals("Login must not be blank, consist only of whitespace, or contain spaces",
                 violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле login состоит из пробелов")
+    @DisplayName("Should throw an error if the login field contains only spaces")
     void validateLoginConsistsOfSpaces() {
         User user = new User();
         user.setEmail("lubov@mail.ru");
@@ -150,17 +150,17 @@ class UserTest {
         user.setLogin(" ");
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("login", violation.getPropertyPath().toString());
-        assertEquals("Логин не может быть пустым, состоять только из пробелов или содержать пробелы",
+        assertEquals("Login must not be blank, consist only of whitespace, or contain spaces",
                 violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле login содержит пробелы")
+    @DisplayName("Should throw an error if the login field contains spaces")
     void validateLoginContainsSpaces() {
         User user = new User();
         user.setEmail("lubov@mail.ru");
@@ -169,17 +169,17 @@ class UserTest {
         user.setLogin("lubov E");
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("login", violation.getPropertyPath().toString());
-        assertEquals("Логин не может быть пустым, состоять только из пробелов или содержать пробелы",
+        assertEquals("Login must not be blank, consist only of whitespace, or contain spaces",
                 violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле birthday равно null")
+    @DisplayName("Should throw an error if the birthday field is null")
     void validateNullBirthday() {
         User user = new User();
         user.setEmail("lubov@mail.ru");
@@ -188,16 +188,16 @@ class UserTest {
         user.setBirthday(null);
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("birthday", violation.getPropertyPath().toString());
-        assertEquals("Это поле обязательно для заполнения", violation.getMessage());
+        assertEquals("This field is required", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле birthday указано в будущем")
+    @DisplayName("Should throw an error if the birthday is set in the future")
     void validateBirthdayInFuture() {
         User user = new User();
         user.setEmail("lubov@mail.ru");
@@ -206,12 +206,11 @@ class UserTest {
         user.setBirthday(LocalDate.of(3015, 10, 10));
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<User> violation = violations.iterator().next();
         assertEquals("birthday", violation.getPropertyPath().toString());
-        assertEquals("Дата рождения не может быть в будущем", violation.getMessage());
+        assertEquals("Birth date must not be in the future", violation.getMessage());
     }
-
 }
