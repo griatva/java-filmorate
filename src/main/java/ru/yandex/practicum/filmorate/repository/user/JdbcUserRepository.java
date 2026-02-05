@@ -23,7 +23,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public List<User> getUserList() {
-        log.info("Получен запрос на список всех пользователей");
+        log.info("Received request to retrieve the list of all users");
         final String GET_ALL_USERS = "SELECT u.*, \n" +
                 "       f.friend_id\n" +
                 "FROM users AS u\n" +
@@ -34,7 +34,7 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     private List<User> getUsersList(String sqlQuery, Object... params) {
-        log.info("Начало подготовки списка пользователей");
+        log.info("Starting preparation of the user list");
         return jdbc.query(sqlQuery, params, new ResultSetExtractor<List<User>>() {
             @Override
             public List<User> extractData(ResultSet rs) throws SQLException {
@@ -61,7 +61,7 @@ public class JdbcUserRepository implements UserRepository {
                         user.getFriendsIds().add(friendId);
                     }
                 }
-                log.info("Список подготовлен");
+                log.info("User list has been prepared");
                 return new ArrayList<>(users.values());
             }
         });
@@ -69,7 +69,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User createUser(User user) {
-        log.info("Получен запрос на добавление пользователя");
+        log.info("Received request to add a user");
         final String CREATE_USER = "INSERT INTO users (login, name, email, birthday) " +
                 "VALUES (?, ?, ?, ?);";
         final GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -88,16 +88,16 @@ public class JdbcUserRepository implements UserRepository {
         if (generatedId != null) {
             user.setId(generatedId);
         } else {
-            throw new RuntimeException("Не удалось получить сгенерированный ID для пользователя");
+            throw new RuntimeException("Failed to retrieve the generated ID for the user");
         }
-        log.info("Добавление пользователя: {} - закончено, присвоен id: {}", user, user.getId());
+        log.info("User addition completed: {} - assigned id: {}", user, user.getId());
         return user;
     }
 
 
     @Override
     public User updateUser(User newUser) {
-        log.info("Получен запрос на обновление данных пользователя c id: {}", newUser.getId());
+        log.info("Received request to update user data with id: {}", newUser.getId());
 
         final String UPDATE_USER = "update users set " +
                 "login = ?, name = ?, email = ?, birthday = ? " +
@@ -113,9 +113,9 @@ public class JdbcUserRepository implements UserRepository {
         );
 
         final User updatedUser = getUserById(newUserId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id = " + newUserId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("User with id = " + newUserId + " was not found"));
 
-        log.info("Обновление пользователя: {} - закончено.", newUser);
+        log.info("User update completed: {}.", newUser);
         return updatedUser;
     }
 
@@ -123,21 +123,21 @@ public class JdbcUserRepository implements UserRepository {
     public void addFriend(long userId, long friendId) {
 
         if (userId == friendId) {
-            log.warn("Попытка добавить самого себя в друзья: userId = {}", userId);
+            log.warn("Attempt to add oneself as a friend: userId = {}", userId);
             return;
         }
 
-        log.info("Запрос на добавление друга: userId = {}, friendId = {}", userId, friendId);
+        log.info("Received request to add a friend: userId = {}, friendId = {}", userId, friendId);
 
         boolean directPairExists = pairExists(userId, friendId);
         if (directPairExists) {
-            log.info("Прямая дружба уже существует: пользователь {} уже в друзьях у {}", friendId, userId);
+            log.info("Direct friendship already exists: user {} is already a friend of {}", friendId, userId);
             return;
         }
 
         boolean reversePairExists = pairExists(friendId, userId);
         if (reversePairExists) {
-            log.info("Обратная дружба найдена: подтверждение дружбы между {} и {}", friendId, userId);
+            log.info("Reverse friendship found: confirming friendship between {} and {}", friendId, userId);
 
             final String INSERT_DIRECT_PAIR =
                     "MERGE INTO friendship (user_id, friend_id, status_id)\n" +
@@ -150,19 +150,19 @@ public class JdbcUserRepository implements UserRepository {
                             "OR (user_id = ? AND friend_id = ?)";
             jdbc.update(UPDATE_STATUSES, userId, friendId, friendId, userId);
 
-            log.info("Дружба подтверждена: пользователи {} и {} теперь друзья", userId, friendId);
+            log.info("Friendship confirmed: users {} and {} are now friends", userId, friendId);
         } else {
             final String INSERT_FRIENDSHIP =
                     "INSERT INTO friendship (user_id, friend_id, status_id) VALUES (?, ?, 2)";
             jdbc.update(INSERT_FRIENDSHIP, userId, friendId);
 
-            log.info("Запрос в друзья: пользователь {} отправил запрос пользователю {} со статусом 2 (Pending)",
+            log.info("Friend request sent: user {} sent a request to user {} with status 2 (Pending)",
                     userId, friendId);
         }
     }
 
     private boolean pairExists(long userId, long friendId) {
-        log.info("Начало поиска пары в БД");
+        log.info("Starting search for the pair in the database");
         final String CHECK_PAIR =
                 "SELECT COUNT(*) FROM friendship WHERE user_id = ? AND friend_id = ?";
         Integer count = jdbc.queryForObject(CHECK_PAIR, Integer.class, userId, friendId);
@@ -171,32 +171,32 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public void deleteFriend(long userId, long friendId) {
-        log.info("Запрос на удаление друга: userId = {}, friendId = {}", userId, friendId);
+        log.info("Received request to remove a friend: userId = {}, friendId = {}", userId, friendId);
 
         if (!pairExists(userId, friendId)) {
-            log.info("Пользователь {} не имеет в друзьях пользователя {}", userId, friendId);
+            log.info("User {} does not have user {} as a friend", userId, friendId);
             return;
         }
 
         final String DELETE_DIRECT_PAIR =
                 "DELETE FROM friendship WHERE user_id = ? AND friend_id = ?";
         jdbc.update(DELETE_DIRECT_PAIR, userId, friendId);
-        log.info("Удалена запись дружбы: {} -> {}", userId, friendId);
+        log.info("Friendship record removed: {} -> {}", userId, friendId);
 
         if (pairExists(friendId, userId)) {
             final String UPDATE_REVERSE_PAIR =
                     "UPDATE friendship SET status_id = 2 WHERE user_id = ? AND friend_id = ?";
             jdbc.update(UPDATE_REVERSE_PAIR, friendId, userId);
-            log.info("Обновлена запись дружбы: {} -> {} теперь имеет статус 2 (Pending)", friendId, userId);
+            log.info("Friendship record updated: {} -> {} now has status 2 (Pending)", friendId, userId);
         } else {
-            log.info("Односторонняя дружба удалена: пользователь {} больше не в друзьях у пользователя {}",
+            log.info("One-way friendship removed: user {} is no longer a friend of user {}",
                     userId, friendId);
         }
     }
 
     @Override
     public List<User> getFriendsList(long id) {
-        log.info("Получен запрос на получение списка друзей пользователя c id: {}", id);
+        log.info("Received request to retrieve the friend list for user with id: {}", id);
 
         final String GET_ACCEPTED_FRIENDS = "SELECT \n" +
                 "    u.user_id AS user_id,\n" +
@@ -216,7 +216,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public List<User> getCommonFriendsList(long id, long otherId) {
-        log.info("Запрос на получение списка общих друзей следующих пользователей: userId = {}, friendId = {}",
+        log.info("Received request to retrieve the list of mutual friends for users: userId = {}, friendId = {}",
                 id, otherId);
 
         final String GET_COMMON_FRIENDS = "SELECT u.user_id AS user_id,\n" +
@@ -235,36 +235,36 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public boolean existByEmail(String email) {
-        log.info("Проверка существования пользователя с email: {}", email);
+        log.info("Checking existence of user with email: {}", email);
 
         final String CHECK_EMAIL_EXISTS = "SELECT COUNT(*) FROM users WHERE email = ?";
         Integer count = jdbc.queryForObject(CHECK_EMAIL_EXISTS, Integer.class, email);
         boolean exists = count != null && count > 0;
         if (exists) {
-            log.info("Пользователь с email {} найден в базе данных.", email);
+            log.info("User with email {} was found in the database.", email);
         } else {
-            log.info("Пользователь с email {} не найден.", email);
+            log.info("User with email {} was not found.", email);
         }
         return exists;
     }
 
     @Override
     public boolean containsUserById(long id) {
-        log.info("Проверка существования пользователя с id: {}", id);
+        log.info("Checking existence of user with id: {}", id);
 
         final String CHECK_USER_EXISTS_BY_ID = "SELECT COUNT(*) FROM users WHERE user_id = ?";
         Integer count = jdbc.queryForObject(CHECK_USER_EXISTS_BY_ID, Integer.class, id);
         boolean exists = count != null && count > 0;
         if (exists) {
-            log.info("Пользователь с id {} существует в базе данных.", id);
+            log.info("User with id {} exists in the database.", id);
         } else {
-            log.info("Пользователь с id {} не найден в базе данных.", id);
+            log.info("User with id {} was not found in the database.", id);
         }
         return exists;
     }
 
     private Optional<User> getUserById(Long id) {
-        log.info("Поиск пользователя с id: {}", id);
+        log.info("Searching for user with id: {}", id);
 
         final String GET_USER_BY_ID = "SELECT u.user_id AS user_id,\n" +
                 "       u.login AS login,\n" +

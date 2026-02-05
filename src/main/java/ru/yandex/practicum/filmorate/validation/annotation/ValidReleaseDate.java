@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidReleaseDate {
-    String message() default "Фильм должен быть выпущен позже 28 декабря 1895 года";
+    String message() default "The film must be released after December 28, 1895";
 
     Class<?>[] groups() default {};
 

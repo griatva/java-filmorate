@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Тестирование валидации модели Film")
+@DisplayName("Testing Film model validation")
 class FilmTest {
 
     private static Validator validator;
@@ -35,7 +35,7 @@ class FilmTest {
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле name равно null")
+    @DisplayName("Should throw an error if the name field is null")
     void validateNullName() {
         Film film = new Film();
         film.setReleaseDate(LocalDate.now());
@@ -43,16 +43,16 @@ class FilmTest {
         film.setName(null);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Неправильное количество ошибок");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "Incorrect number of validation errors");
 
         ConstraintViolation<Film> violation = violations.iterator().next();
         assertEquals("name", violation.getPropertyPath().toString());
-        assertEquals("Название не может быть пустым", violation.getMessage());
+        assertEquals("Name must not be blank", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле name пустое")
+    @DisplayName("Should throw an error if the name field is empty")
     void validateEmptyName() {
         Film film = new Film();
         film.setReleaseDate(LocalDate.now());
@@ -60,16 +60,16 @@ class FilmTest {
         film.setName("");
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Ошибка не появилась");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "No validation error was thrown");
 
         ConstraintViolation<Film> violation = violations.iterator().next();
         assertEquals("name", violation.getPropertyPath().toString());
-        assertEquals("Название не может быть пустым", violation.getMessage());
+        assertEquals("Name must not be blank", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если поле name пустое")
+    @DisplayName("Should throw an error if the name field is empty")
     void validateNameConsistsOfSpaces() {
         Film film = new Film();
         film.setReleaseDate(LocalDate.now());
@@ -77,72 +77,74 @@ class FilmTest {
         film.setName("  ");
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Ошибка не появилась");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "No validation error was thrown");
 
         ConstraintViolation<Film> violation = violations.iterator().next();
         assertEquals("name", violation.getPropertyPath().toString());
-        assertEquals("Название не может быть пустым", violation.getMessage());
+        assertEquals("Name must not be blank", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если описание содержит более 200 символов")
+    @DisplayName("Should throw an error if the description exceeds 200 characters")
     void validateDescriptionLength() {
         Film film = new Film();
         film.setName("Name");
         film.setReleaseDate(LocalDate.now());
 
-        film.setDescription("Этот фильм про страшных монстров, которые пугают детей по ночам для получения электроэнергии для своего мира. " +
-                "История начинается с момента, когда все пошло не по плану и ребенок проникает в мир монстров.");
+        film.setDescription("This film tells the story of frightening monsters who scare children at night to generate " +
+                "energy for their world. Everything changes when a curious child accidentally enters the monster world, " +
+                "causing chaos, fear, and unexpected consequences for both sides."
+        );
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Ошибка не появилась");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "No validation error was thrown");
 
         ConstraintViolation<Film> violation = violations.iterator().next();
         assertEquals("description", violation.getPropertyPath().toString());
-        assertEquals("Длина описания должна быть не более 200 символов", violation.getMessage());
+        assertEquals("Description must not exceed 200 characters", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если дата выпуска null")
+    @DisplayName("Should throw an error if the release date is null")
     void validateNullReleaseDate() {
         Film film = new Film();
         film.setName("Name");
-        film.setDescription("Очень веселый фильм");
+        film.setDescription("A very funny film");
 
         film.setReleaseDate(null);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Ошибка не появилась");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "No validation error was thrown");
 
         ConstraintViolation<Film> violation = violations.iterator().next();
         assertEquals("releaseDate", violation.getPropertyPath().toString());
-        assertEquals("Это поле обязательно для заполнения", violation.getMessage());
+        assertEquals("This field is required", violation.getMessage());
     }
 
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если дата выпуска раньше 28.12.1895")
+    @DisplayName("Should throw an error if the release date is before December 28, 1895")
     void validateReleaseDate() {
         Film film = new Film();
         film.setName("Name");
-        film.setDescription("Очень веселый фильм");
+        film.setDescription("A very funny film");
 
         film.setReleaseDate(LocalDate.of(1894, Month.SEPTEMBER, 10));
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Ошибка не появилась");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "No validation error was thrown");
 
         ConstraintViolation<Film> violation = violations.iterator().next();
         assertEquals("releaseDate", violation.getPropertyPath().toString());
-        assertEquals("Фильм должен быть выпущен позже 28 декабря 1895 года", violation.getMessage());
+        assertEquals("The film must be released after December 28, 1895", violation.getMessage());
     }
 
     @Test
-    @DisplayName("Должен выкинуть ошибку, если длительность отрицательная")
+    @DisplayName("Should throw an error if the duration is negative")
     void validatePositiveDuration() {
         Film film = new Film();
         film.setName("Name");
@@ -151,12 +153,12 @@ class FilmTest {
         film.setDuration(-500);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertFalse(violations.isEmpty(), "Ошибка не появилась");
-        assertEquals(1, violations.size(), "Ошибка не появилась");
+        assertFalse(violations.isEmpty(), "No validation error was thrown");
+        assertEquals(1, violations.size(), "No validation error was thrown");
 
         ConstraintViolation<Film> violation = violations.iterator().next();
         assertEquals("duration", violation.getPropertyPath().toString());
-        assertEquals("Продолжительность фильма должна быть положительной", violation.getMessage());
+        assertEquals("Movie duration must be positive", violation.getMessage());
     }
 
 }

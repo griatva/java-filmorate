@@ -22,7 +22,7 @@ public class JdbcMpaRepository implements MpaRepository {
 
     @Override
     public List<RatingMPA> getAllMpa() {
-        log.info("Получен запрос на получение списка всех рейтингов MPA");
+        log.info("Received request to retrieve the list of all MPA ratings");
 
         final String GET_ALL_MPA = "SELECT * FROM rating_mpa;";
 
@@ -44,13 +44,13 @@ public class JdbcMpaRepository implements MpaRepository {
             }
         });
 
-        log.info("Список рейтингов MPA успешно получен");
+        log.info("The list of MPA ratings was successfully retrieved");
         return mpaList;
     }
 
     @Override
     public RatingMPA getMpaById(int id) {
-        log.info("Получен запрос на получение рейтинга MPA с id = {}", id);
+        log.info("Received request to retrieve MPA rating with id = {}", id);
 
         final String FIND_MPA_BY_ID = "SELECT * FROM rating_mpa WHERE rating_mpa_id = ?;";
 
@@ -62,7 +62,7 @@ public class JdbcMpaRepository implements MpaRepository {
                 }
             }, id);
 
-            log.info("Рейтинг MPA с id = {} найден: {}", id, ratingMPA);
+            log.info("MPA rating with id = {} was found: {}", id, ratingMPA);
             return ratingMPA;
         } catch (EmptyResultDataAccessException e) {
             return null;

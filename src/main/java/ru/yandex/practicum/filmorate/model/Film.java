@@ -13,17 +13,17 @@ public class Film {
 
     private Long id;
 
-    @NotBlank(message = "Название не может быть пустым")
+    @NotBlank(message = "Name must not be blank")
     private String name;
 
-    @Size(max = 200, message = "Длина описания должна быть не более 200 символов")
+    @Size(max = 200, message = "Description must not exceed 200 characters")
     private String description;
 
-    @NotNull(message = "Это поле обязательно для заполнения")
+    @NotNull(message = "This field is required")
     @ValidReleaseDate
     private LocalDate releaseDate;
 
-    @Positive(message = "Продолжительность фильма должна быть положительной")
+    @Positive(message = "Movie duration must be positive")
     private Integer duration;
 
     private Set<Genre> genres;

@@ -22,9 +22,9 @@ public class JdbcGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> getByIds(List<Integer> ids) {
-        log.info("Начало подготовки списка жанров по их id");
+        log.info("Starting preparation of the genre list by their IDs");
         if (ids == null || ids.isEmpty()) {
-            log.info("Список id пуст или равен null. Возвращён пустой список.");
+            log.info("The list of IDs is null or empty. An empty list has been returned.");
             return Collections.emptyList();
         }
         String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
@@ -37,13 +37,13 @@ public class JdbcGenreRepository implements GenreRepository {
             return genre;
         });
 
-        log.info("Завершение подготовки списка жанров.");
+        log.info("Finished preparing the genre list.");
         return genres;
     }
 
     @Override
     public List<Genre> getAllGenres() {
-        log.info("Получен запрос на получение списка всех жанров");
+        log.info("Received a request to retrieve the list of all genres.");
 
         final String GET_ALL_GENRES = "select * from genres;";
 
@@ -68,13 +68,13 @@ public class JdbcGenreRepository implements GenreRepository {
             }
         });
 
-        log.info("Завершение получения списка жанров.");
+        log.info("Finished retrieving the genre list.");
         return genres;
     }
 
     @Override
     public Genre getGenreById(Integer id) {
-        log.info("Получен запрос на получение жанра с id = {}", id);
+        log.info("Received request to retrieve genre with id = {}", id);
 
         final String FIND_GENRE_BY_ID = "SELECT * FROM genres WHERE genre_id = ?;";
 
@@ -89,10 +89,10 @@ public class JdbcGenreRepository implements GenreRepository {
                 }
             }, id);
 
-            log.info("Жанр с id = {} успешно найден: {}", id, genre);
+            log.info("Genre with id = {} was successfully found: {}", id, genre);
             return genre;
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Жанр с id = " + id + " не найден");
+            throw new NotFoundException("Genre with id = " + id + " was not found");
         }
     }
 }

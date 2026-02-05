@@ -62,12 +62,12 @@ class FilmorateApplicationTests {
 		LinkedHashSet<Genre> genres = new LinkedHashSet<>();
 		Genre genre1 = new Genre();
 		genre1.setId(1);
-		genre1.setName("Комедия");
+		genre1.setName("Comedy");
 		genres.add(genre1);
 
 		Genre genre2 = new Genre();
 		genre2.setId(2);
-		genre2.setName("Драма");
+		genre2.setName("Drama");
 		genres.add(genre2);
 
 		Film film = new Film();
@@ -179,8 +179,8 @@ class FilmorateApplicationTests {
 		assertThat(count).isEqualTo(1);
 
 		Film film = filmRepository.findFilmById(2).orElseThrow(() ->
-				new NotFoundException("Фильм, которому поставили лайки, не найден"));
-		assertEquals(1, film.getLikes(), "Количество лайков неверное, лайк не добавился");
+				new NotFoundException("The film that received likes was not found"));
+		assertEquals(1, film.getLikes(), "Incorrect number of likes, the like was not added");
 	}
 
 	@Test
@@ -553,7 +553,7 @@ class FilmorateApplicationTests {
 		assertThat(genreList)
 				.hasSize(6)
 				.extracting(Genre::getName)
-				.containsExactlyInAnyOrder("Комедия", "Драма", "Мультфильм", "Триллер", "Документальный", "Боевик");
+				.containsExactlyInAnyOrder("Comedy", "Drama", "Animation", "Thriller", "Documentary", "Action");
 	}
 
 
@@ -564,7 +564,7 @@ class FilmorateApplicationTests {
 		assertThat(genre)
 				.isNotNull()
 				.extracting(Genre::getName)
-				.isEqualTo("Драма");
+				.isEqualTo("Drama");
 	}
 
 }
