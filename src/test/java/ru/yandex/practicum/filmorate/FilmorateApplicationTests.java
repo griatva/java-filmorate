@@ -62,12 +62,12 @@ class FilmorateApplicationTests {
 		LinkedHashSet<Genre> genres = new LinkedHashSet<>();
 		Genre genre1 = new Genre();
 		genre1.setId(1);
-		genre1.setName("Comedy");
+		genre1.setName("Комедия");
 		genres.add(genre1);
 
 		Genre genre2 = new Genre();
 		genre2.setId(2);
-		genre2.setName("Drama");
+		genre2.setName("Драма");
 		genres.add(genre2);
 
 		Film film = new Film();
@@ -146,13 +146,20 @@ class FilmorateApplicationTests {
 
 		//when
 		filmRepository.updateFilm(filmExpected);
-		Optional<Film> filmActual = filmRepository.findFilmById(1);
+		Optional<Film> filmActual = filmRepository.findFilmById(1L);
 
 		//then
-		assertThat(filmActual)
-				.isPresent()
-				.get()
-				.isEqualTo(filmExpected);
+		assertThat(filmActual).isPresent();
+
+		Film actual = filmActual.get();
+
+		assertThat(actual.getId()).isEqualTo(1L);
+		assertThat(actual.getName()).isEqualTo("Name2");
+		assertThat(actual.getDescription()).isEqualTo("Description2");
+		assertThat(actual.getReleaseDate()).isEqualTo(LocalDate.of(2020, 12, 12));
+		assertThat(actual.getDuration()).isEqualTo(120);
+		assertThat(actual.getMpa().getId()).isEqualTo(2);
+		assertThat(actual.getMpa().getName()).isEqualTo("PG");
 	}
 
 	@Test
@@ -262,12 +269,19 @@ class FilmorateApplicationTests {
 
 		filmRepository.createFilm(expectedFilm);
 
-		Optional<Film> filmOptional = filmRepository.findFilmById(1);
+		Optional<Film> filmOptional = filmRepository.findFilmById(1L);
 
-		assertThat(filmOptional)
-				.isPresent()
-				.get()
-				.isEqualTo(expectedFilm);
+		assertThat(filmOptional).isPresent();
+
+		Film actual = filmOptional.get();
+
+		assertThat(actual.getId()).isEqualTo(1L);
+		assertThat(actual.getName()).isEqualTo("Name1");
+		assertThat(actual.getDescription()).isEqualTo("Description1");
+		assertThat(actual.getReleaseDate()).isEqualTo(LocalDate.of(2020, 11, 11));
+		assertThat(actual.getDuration()).isEqualTo(110);
+		assertThat(actual.getMpa().getId()).isEqualTo(1);
+		assertThat(actual.getMpa().getName()).isEqualTo("G");
 	}
 
 	@Test
@@ -553,7 +567,7 @@ class FilmorateApplicationTests {
 		assertThat(genreList)
 				.hasSize(6)
 				.extracting(Genre::getName)
-				.containsExactlyInAnyOrder("Comedy", "Drama", "Animation", "Thriller", "Documentary", "Action");
+				.containsExactlyInAnyOrder("Комедия", "Драма", "Мультфильм", "Триллер", "Документальный", "Боевик");
 	}
 
 
@@ -564,7 +578,7 @@ class FilmorateApplicationTests {
 		assertThat(genre)
 				.isNotNull()
 				.extracting(Genre::getName)
-				.isEqualTo("Drama");
+				.isEqualTo("Драма");
 	}
 
 }
